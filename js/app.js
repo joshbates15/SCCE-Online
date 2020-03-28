@@ -18,7 +18,7 @@ function handleError(error) {
     }
   }
   
-  function initializeSession() {
+function initializeSession() {
     var session = OT.initSession(apiKey, sessionId);
   
     // Subscribe to a newly created stream
@@ -46,4 +46,34 @@ function handleError(error) {
         session.publish(publisher, handleError);
       }
     });
-  }
+    
+    // Receive a message and append it to the history
+    var msgHistory = document.querySelector('#history');
+    session.on('signal:msg', function signalCallback(event) {
+        var msg = document.createElement('p');
+        msg.textContent = event.data;
+        msg.className = event.from.connectionId === session.connection.connectionId ? 'mine' : 'theirs';
+        msgHistory.appendChild(msg);
+        msg.scrollIntoView();
+    });
+}
+
+// Text chat
+var form = document.querySelector('form');
+var msgTxt = document.querySelector('#msgTxt');
+
+// Send a signal once the user enters data in the form
+form.addEventListener('submit', function submit(event) {
+  event.preventDefault();
+
+  session.signal({
+    type: 'msg',
+    data: msgTxt.value
+  }, function signalCallback(error) {
+    if (error) {
+      console.error('Error sending signal:', error.name, error.message);
+    } else {
+      msgTxt.value = '';
+    }
+  });
+});
