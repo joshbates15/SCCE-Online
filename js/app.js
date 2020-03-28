@@ -1,5 +1,5 @@
 // (optional) add server code here
-var SERVER_BASE_URL = 'https://scce-online.herokuapp.com/';
+var SERVER_BASE_URL = 'https://scce-online.herokuapp.com';
 fetch(SERVER_BASE_URL + '/session').then(function(res) {
   return res.json()
 }).then(function(res) {
